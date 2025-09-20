@@ -1,13 +1,12 @@
 package main
 
-import (
-	"fmt"
-	"strings"
-)
+import "fmt"
 
 func main() {
-	var num1, num2 int
-	var operation string
+	var ( 
+		num1, num2 int
+		operation string
+	)
 
 	_, err := fmt.Scan(&num1)
 	if err != nil {
@@ -22,13 +21,8 @@ func main() {
 	}
 
 	_, err3 := fmt.Scan(&operation)
-	if err3 != nil || !strings.ContainsAny(operation, "+-*/") {
+	if err3 != nil {
 		fmt.Println("Invalid operation")
-		return
-	}
-
-	if operation == "/" && num2 == 0 {
-		fmt.Println("Division by zero")
 		return
 	}
 
@@ -40,6 +34,12 @@ func main() {
 	case "*":
 		fmt.Println(num1 * num2)
 	case "/":
+		if num2 == 0 {
+			fmt.Println("Division by zero")
+			return
+		}
 		fmt.Println(num1 / num2)
+	default:
+		fmt.Println("Invalid operation")
 	}
 }
