@@ -3,9 +3,9 @@ package main
 import "fmt"
 
 func main() {
-	var ( 
+	var (
 		num1, num2 int
-		operation string
+		operation  string
 	)
 
 	_, err := fmt.Scan(&num1)
