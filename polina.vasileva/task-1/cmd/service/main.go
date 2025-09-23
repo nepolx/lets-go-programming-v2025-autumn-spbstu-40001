@@ -14,14 +14,14 @@ func main() {
 		return
 	}
 
-	_, err2 := fmt.Scan(&num2)
-	if err2 != nil {
+	_, err = fmt.Scan(&num2)
+	if err != nil {
 		fmt.Println("Invalid second operand")
 		return
 	}
 
-	_, err3 := fmt.Scan(&operation)
-	if err3 != nil {
+	_, err = fmt.Scan(&operation)
+	if err != nil {
 		fmt.Println("Invalid operation")
 		return
 	}
