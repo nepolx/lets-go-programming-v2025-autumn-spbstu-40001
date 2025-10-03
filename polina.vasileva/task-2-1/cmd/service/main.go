@@ -61,7 +61,6 @@ func main() {
 			} else {
 				fmt.Println("-1")
 
-				return
 			}
 		}
 	}
