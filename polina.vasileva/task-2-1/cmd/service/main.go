@@ -46,6 +46,7 @@ func main() {
 			}
 
 			var degrees int
+
 			_, err = fmt.Scan(&degrees)
 			if err != nil {
 				fmt.Println("Invalid input")
