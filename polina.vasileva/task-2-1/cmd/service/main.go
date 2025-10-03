@@ -25,6 +25,7 @@ func main() {
 
 	for range departNum {
 		var emplCount int
+
 		_, err := fmt.Scan(&emplCount)
 		if err != nil {
 			fmt.Println("Invalid input")
@@ -36,6 +37,7 @@ func main() {
 
 		for range emplCount {
 			var sign string
+
 			_, err = fmt.Scan(&sign)
 			if err != nil {
 				fmt.Println("Invalid input")
