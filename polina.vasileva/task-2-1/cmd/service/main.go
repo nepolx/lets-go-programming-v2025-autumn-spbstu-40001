@@ -60,7 +60,6 @@ func main() {
 				fmt.Println(conditioner.minTemp)
 			} else {
 				fmt.Println("-1")
-
 			}
 		}
 	}
