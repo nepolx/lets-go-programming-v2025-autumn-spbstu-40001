@@ -15,8 +15,8 @@ type ConditionerT struct {
 
 func main() {
 	var departNum int
-	_, err := fmt.Scan(&departNum)
 
+	_, err := fmt.Scan(&departNum)
 	if err != nil {
 		fmt.Println("Invalid input")
 
