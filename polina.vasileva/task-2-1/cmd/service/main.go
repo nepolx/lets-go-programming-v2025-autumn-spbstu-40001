@@ -8,7 +8,7 @@ const MAXTEMP = 30
 type ConditionerT struct {
 	minTemp int
 	maxTemp int
-	status  bool // true - good, false - bad
+	status  bool
 }
 
 func main() {
@@ -18,7 +18,6 @@ func main() {
 		fmt.Println("Invalid input")
 		return
 	}
-	
 	for range departNum {
 		var emplCount int
 		_, err := fmt.Scan(&emplCount)
@@ -26,7 +25,6 @@ func main() {
 			fmt.Println("Invalid input")
 			return
 		}
-		
 		conditioner := ConditionerT{MINTEMP, MAXTEMP, true}
 		for range emplCount {
 			var sign string
@@ -41,7 +39,6 @@ func main() {
 				fmt.Println("Invalid input")
 				return
 			}
-			
 			if conditioner.status {
 				changeTemp(&conditioner, sign, degrees)
 				if conditioner.status {
