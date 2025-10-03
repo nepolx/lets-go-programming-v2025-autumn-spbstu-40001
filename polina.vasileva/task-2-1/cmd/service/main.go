@@ -88,7 +88,6 @@ func changeTemp(cond *ConditionerT, sign string, degrees int) {
 		}
 
 	default:
-		fmt.Println("Invalid input")
 		cond.status = false
 	}
 }
