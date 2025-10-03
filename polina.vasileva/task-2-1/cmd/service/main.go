@@ -54,10 +54,6 @@ func main() {
 				return
 			}
 
-			if !conditioner.status {
-				continue
-			}
-
 			changeTemp(&conditioner, sign, degrees)
 
 			if conditioner.status {
@@ -92,6 +88,7 @@ func changeTemp(cond *ConditionerT, sign string, degrees int) {
 		}
 
 	default:
+		fmt.Println("Invalid input")
 		cond.status = false
 	}
 }
