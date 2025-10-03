@@ -14,6 +14,7 @@ type ConditionerT struct {
 func main() {
 	var departNum int
 	_, err := fmt.Scan(&departNum)
+
 	if err != nil {
 		fmt.Println("Invalid input")
 
@@ -23,6 +24,7 @@ func main() {
 	for range departNum {
 		var emplCount int
 		_, err := fmt.Scan(&emplCount)
+
 		if err != nil {
 			fmt.Println("Invalid input")
 
@@ -34,6 +36,7 @@ func main() {
 		for range emplCount {
 			var sign string
 			_, err = fmt.Scan(&sign)
+
 			if err != nil {
 				fmt.Println("Invalid input")
 
@@ -42,6 +45,7 @@ func main() {
 
 			var degrees int
 			_, err = fmt.Scan(&degrees)
+
 			if err != nil {
 				fmt.Println("Invalid input")
 
