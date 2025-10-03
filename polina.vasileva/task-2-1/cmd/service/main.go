@@ -74,38 +74,24 @@ func main() {
 func changeTemp(cond *ConditionerT, sign string, degrees int) {
 	switch sign {
 	case ">=":
-		handleGreaterEqual(cond, degrees)
+		if degrees > cond.maxTemp {
+			cond.status = false
+		}
+
+		if degrees >= cond.minTemp {
+			cond.minTemp = degrees
+		}
+
 	case "<=":
-		handleLessEqual(cond, degrees)
+		if degrees < cond.minTemp {
+			cond.status = false
+		}
+
+		if degrees <= cond.maxTemp {
+			cond.maxTemp = degrees
+		}
+
 	default:
 		cond.status = false
 	}
-}
-
-func handleGreaterEqual(cond *ConditionerT, degrees int) {
-	if degrees < cond.minTemp {
-		return
-	}
-
-	if degrees > cond.maxTemp {
-		cond.status = false
-
-		return
-	}
-
-	cond.minTemp = degrees
-}
-
-func handleLessEqual(cond *ConditionerT, degrees int) {
-	if degrees > cond.maxTemp {
-		return
-	}
-
-	if degrees < cond.minTemp {
-		cond.status = false
-
-		return
-	}
-
-	cond.maxTemp = degrees
 }
