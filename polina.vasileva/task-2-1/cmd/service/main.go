@@ -2,8 +2,10 @@ package main
 
 import "fmt"
 
-const MINTEMP = 15
-const MAXTEMP = 30
+const (
+	MINTEMP = 15
+	MAXTEMP = 30
+)
 
 type ConditionerT struct {
 	minTemp int
