@@ -4,7 +4,7 @@ import (
 	"container/heap"
 	"fmt"
 
-	"polina.vasileva/task-2-2/pkg/intheap"
+	"github.com/nepolx/task-2-2/pkg/intheap"
 )
 func main() {
 	var dishNum int
