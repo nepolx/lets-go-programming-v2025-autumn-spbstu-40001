@@ -7,7 +7,7 @@ import (
 
 func main() {
 	var (
-		dishNum, k int
+		dishNum, rating int
 	)
 
 	_, err := fmt.Scan(&dishNum)
@@ -17,8 +17,8 @@ func main() {
 		return
 	}
 
-	h := &IntHeap{}
-	heap.Init(h)
+	intheap := &IntHeap{}
+	heap.Init(intheap)
 
 	for range dishNum {
 		var temp int
@@ -28,24 +28,24 @@ func main() {
 
 			return
 		}
-		heap.Push(h, temp)
+		heap.Push(intheap, temp)
 	}
 
-	_, err = fmt.Scan(&k)
+	_, err = fmt.Scan(&rating)
 	if err != nil {
 		fmt.Println("Invalid input", err)
 
 		return
 	}
 
-	for range k - 1 {
-		if h.Len() == 0 {
+	for range rating - 1 {
+		if intheap.Len() == 0 {
 			fmt.Println("There is no such dish")
 		}
-		heap.Pop(h)
+		heap.Pop(intheap)
 	}
 
-	fmt.Println(heap.Pop(h))
+	fmt.Println(heap.Pop(intheap))
 }
 
 type IntHeap []int
