@@ -6,9 +6,7 @@ import (
 )
 
 func main() {
-	var (
-		dishNum, rating int
-	)
+	var dishNum int
 
 	_, err := fmt.Scan(&dishNum)
 	if err != nil {
@@ -32,6 +30,8 @@ func main() {
 
 		heap.Push(intheap, temp)
 	}
+
+	var rating int
 
 	_, err = fmt.Scan(&rating)
 	if err != nil {
