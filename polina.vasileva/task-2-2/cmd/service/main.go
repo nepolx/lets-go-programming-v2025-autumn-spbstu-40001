@@ -3,18 +3,14 @@ package main
 import (
 	"container/heap"
 	"fmt"
-	//"github.com/nepolx/task-2-1/pkg/IntHeap"
 )
 
 func main() {
-	var (
-		dishNum, k int
-	)
+	var dishNum, k int
 
 	_, err := fmt.Scan(&dishNum)
 	if err != nil {
 		fmt.Println("Invalid input", err)
-
 		return
 	}
 
@@ -22,20 +18,18 @@ func main() {
 	heap.Init(h)
 
 	for i := 0; i < dishNum; i++ {
-    	var temp int
-    	_, err := fmt.Scan(&temp)
-    	if err != nil {
-        	fmt.Println("Invalid input", err)
-
-        	return
-    	}
-    	heap.Push(h, temp)
+		var temp int
+		_, err := fmt.Scan(&temp)
+		if err != nil {
+			fmt.Println("Invalid input", err)
+			return
+		}
+		heap.Push(h, temp)
 	}
 
 	_, err = fmt.Scan(&k)
 	if err != nil {
 		fmt.Println("Invalid input", err)
-
 		return
 	}
 
@@ -47,7 +41,6 @@ func main() {
 	}
 
 	fmt.Println(heap.Pop(h))
-
 }
 
 type IntHeap []int
@@ -65,6 +58,5 @@ func (h *IntHeap) Pop() any {
 	n := len(old)
 	x := old[n-1]
 	*h = old[0 : n-1]
-
 	return x
 }
