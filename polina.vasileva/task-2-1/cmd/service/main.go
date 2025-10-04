@@ -10,7 +10,6 @@ const (
 type ConditionerT struct {
 	minTemp int
 	maxTemp int
-	status  bool
 }
 
 func (cond *ConditionerT) changeTemp(sign string, degrees int) {
@@ -47,7 +46,7 @@ func main() {
 			return
 		}
 
-		conditioner := ConditionerT{minTemp, maxTemp, true}
+		conditioner := ConditionerT{minTemp, maxTemp}
 
 		for range emplCount {
 			var sign string
