@@ -31,7 +31,6 @@ func main() {
 		}
 
 		heap.Push(intheap, temp)
-
 	}
 
 	_, err = fmt.Scan(&rating)
@@ -47,7 +46,6 @@ func main() {
 		}
 
 		heap.Pop(intheap)
-
 	}
 
 	fmt.Println(heap.Pop(intheap))
