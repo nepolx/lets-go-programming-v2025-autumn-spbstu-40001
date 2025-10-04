@@ -4,7 +4,7 @@ import (
 	"container/heap"
 	"fmt"
 
-	"github.com/nepolx/task-2-2/pkg/intheap"
+	"polina.vasileva/task-2-2/pkg/intheap"
 )
 func main() {
 	var dishNum int
@@ -16,7 +16,7 @@ func main() {
 		return
 	}
 
-	intheap := &IntHeap{}
+	intheap := &intheap.IntHeap{}
 	heap.Init(intheap)
 
 	for range dishNum {
