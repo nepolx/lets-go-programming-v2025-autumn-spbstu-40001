@@ -3,8 +3,8 @@ package main
 import "fmt"
 
 const (
-	MINTEMP = 15
-	MAXTEMP = 30
+	minTemp = 15
+	maxTemp = 30
 )
 
 type ConditionerT struct {
@@ -13,12 +13,26 @@ type ConditionerT struct {
 	status  bool
 }
 
+func (cond *ConditionerT) changeTemp(sign string, degrees int) {
+	switch sign {
+	case ">=":
+		if degrees >= cond.minTemp {
+			cond.minTemp = degrees
+		}
+
+	case "<=":
+		if degrees <= cond.maxTemp {
+			cond.maxTemp = degrees
+		}
+	}
+}
+
 func main() {
 	var departNum int
 
 	_, err := fmt.Scan(&departNum)
 	if err != nil {
-		fmt.Println("Invalid input")
+		fmt.Println("Invalid input", err)
 
 		return
 	}
@@ -28,19 +42,19 @@ func main() {
 
 		_, err := fmt.Scan(&emplCount)
 		if err != nil {
-			fmt.Println("Invalid input")
+			fmt.Println("Invalid input", err)
 
 			return
 		}
 
-		conditioner := ConditionerT{MINTEMP, MAXTEMP, true}
+		conditioner := ConditionerT{minTemp, maxTemp, true}
 
 		for range emplCount {
 			var sign string
 
 			_, err = fmt.Scan(&sign)
 			if err != nil {
-				fmt.Println("Invalid input")
+				fmt.Println("Invalid input", err)
 
 				return
 			}
@@ -49,43 +63,18 @@ func main() {
 
 			_, err = fmt.Scan(&degrees)
 			if err != nil {
-				fmt.Println("Invalid input")
+				fmt.Println("Invalid input", err)
 
 				return
 			}
 
-			changeTemp(&conditioner, sign, degrees)
+			conditioner.changeTemp(sign, degrees)
 
-			if conditioner.status {
+			if conditioner.minTemp <= conditioner.maxTemp {
 				fmt.Println(conditioner.minTemp)
 			} else {
 				fmt.Println("-1")
 			}
 		}
-	}
-}
-
-func changeTemp(cond *ConditionerT, sign string, degrees int) {
-	switch sign {
-	case ">=":
-		if degrees > cond.maxTemp {
-			cond.status = false
-		}
-
-		if degrees >= cond.minTemp {
-			cond.minTemp = degrees
-		}
-
-	case "<=":
-		if degrees < cond.minTemp {
-			cond.status = false
-		}
-
-		if degrees <= cond.maxTemp {
-			cond.maxTemp = degrees
-		}
-
-	default:
-		cond.status = false
 	}
 }
