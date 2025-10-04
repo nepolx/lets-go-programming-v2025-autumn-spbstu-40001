@@ -22,13 +22,16 @@ func main() {
 
 	for range dishNum {
 		var temp int
+
 		_, err := fmt.Scan(&temp)
 		if err != nil {
 			fmt.Println("Invalid input", err)
 
 			return
 		}
+
 		heap.Push(intheap, temp)
+
 	}
 
 	_, err = fmt.Scan(&rating)
@@ -42,7 +45,9 @@ func main() {
 		if intheap.Len() == 0 {
 			fmt.Println("There is no such dish")
 		}
+
 		heap.Pop(intheap)
+
 	}
 
 	fmt.Println(heap.Pop(intheap))
@@ -54,8 +59,13 @@ func (h *IntHeap) Len() int           { return len(*h) }
 func (h *IntHeap) Less(i, j int) bool { return (*h)[i] > (*h)[j] }
 func (h *IntHeap) Swap(i, j int)      { (*h)[i], (*h)[j] = (*h)[j], (*h)[i] }
 
-func (h *IntHeap) Push(x any) {
-	*h = append(*h, x.(int))
+func (h *IntHeap) Push(x interface{}) {
+	value, ok := x.(int)
+	if !ok {
+		return
+	}
+
+	*h = append(*h, value)
 }
 
 func (h *IntHeap) Pop() any {
