@@ -42,11 +42,13 @@ func main() {
 		return
 	}
 
-	for range rating - 1 {
-		if intheap.Len() == 0 {
-			fmt.Println("There is no such dish")
-		}
+	if rating > intheap.Len() {
+		fmt.Println("There is no such dish")
 
+		return
+	}
+
+	for range rating - 1 {
 		heap.Pop(intheap)
 	}
 
