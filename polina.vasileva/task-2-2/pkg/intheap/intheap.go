@@ -27,8 +27,8 @@ func (h *IntHeap) Push(x interface{}) {
 
 func (h *IntHeap) Pop() any {
 	old := *h
+
 	lenHeap := len(old)
-	
 	if lenHeap == 0 {
 		panic("pop from empty heap")
 	}
