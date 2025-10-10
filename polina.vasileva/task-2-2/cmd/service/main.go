@@ -8,13 +8,13 @@ import (
 )
 
 func main() {
-	defer func() {
+	defer func() {	
 		r := recover()
 		if r != nil {
 			fmt.Println("Panic recovered:", r)
 		}
 	}()
-	
+
 	var dishNum int
 
 	_, err := fmt.Scan(&dishNum)
