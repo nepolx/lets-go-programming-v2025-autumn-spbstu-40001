@@ -5,15 +5,15 @@ import "fmt"
 type IntHeap []int
 
 func (h *IntHeap) Len() int {
-	return len(*h) 
+	return len(*h)
 }
 
 func (h *IntHeap) Less(i, j int) bool {
 	return (*h)[i] > (*h)[j]
 }
 
-func (h *IntHeap) Swap(i, j int) { 
-	(*h)[i], (*h)[j] = (*h)[j], (*h)[i] 
+func (h *IntHeap) Swap(i, j int) {
+	(*h)[i], (*h)[j] = (*h)[j], (*h)[i]
 }
 
 func (h *IntHeap) Push(x interface{}) {
@@ -27,13 +27,14 @@ func (h *IntHeap) Push(x interface{}) {
 
 func (h *IntHeap) Pop() any {
 	old := *h
-	n := len(old)
-	if n == 0 {
-        panic("pop from empty heap")
-    }
+	lenHeap := len(old)
+	
+	if lenHeap == 0 {
+		panic("pop from empty heap")
+	}
 
-	x := old[n-1]
-	*h = old[0 : n-1]
+	x := old[lenHeap-1]
+	*h = old[0 : lenHeap-1]
 
 	return x
 }
