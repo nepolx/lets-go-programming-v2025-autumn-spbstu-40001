@@ -13,7 +13,6 @@ type ConditionerT struct {
 }
 
 func New(minTemperature, maxTemperature int) ConditionerT {
-
 	return ConditionerT{
 		minTemp: minTemperature,
 		maxTemp: maxTemperature,
@@ -36,10 +35,8 @@ func (cond *ConditionerT) changeTemp(sign string, degrees int) int {
 	}
 
 	if cond.minTemp <= cond.maxTemp {
-
 		return cond.minTemp
 	} else {
-
 		return -1
 	}
 }
@@ -86,7 +83,6 @@ func main() {
 			}
 
 			fmt.Println(conditioner.changeTemp(sign, degrees))
-
 		}
 	}
 }
