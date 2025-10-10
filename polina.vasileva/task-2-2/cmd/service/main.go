@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	defer func() {	
+	defer func() {
 		r := recover()
 		if r != nil {
 			fmt.Println("Panic recovered:", r)
