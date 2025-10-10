@@ -12,7 +12,15 @@ type ConditionerT struct {
 	maxTemp int
 }
 
-func (cond *ConditionerT) changeTemp(sign string, degrees int) {
+func New(minTemperature, maxTemperature int) ConditionerT {
+
+	return ConditionerT{
+		minTemp: minTemperature,
+		maxTemp: maxTemperature,
+	}
+}
+
+func (cond *ConditionerT) changeTemp(sign string, degrees int) int {
 	switch sign {
 	case ">=":
 		if degrees >= cond.minTemp {
@@ -23,6 +31,16 @@ func (cond *ConditionerT) changeTemp(sign string, degrees int) {
 		if degrees <= cond.maxTemp {
 			cond.maxTemp = degrees
 		}
+	default:
+		fmt.Println("Invalid operation")
+	}
+
+	if cond.minTemp <= cond.maxTemp {
+
+		return cond.minTemp
+	} else {
+
+		return -1
 	}
 }
 
@@ -46,7 +64,7 @@ func main() {
 			return
 		}
 
-		conditioner := ConditionerT{minTemp, maxTemp}
+		conditioner := New(minTemp, maxTemp)
 
 		for range emplCount {
 			var sign string
@@ -67,13 +85,8 @@ func main() {
 				return
 			}
 
-			conditioner.changeTemp(sign, degrees)
+			fmt.Println(conditioner.changeTemp(sign, degrees))
 
-			if conditioner.minTemp <= conditioner.maxTemp {
-				fmt.Println(conditioner.minTemp)
-			} else {
-				fmt.Println("-1")
-			}
 		}
 	}
 }
