@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"errors"
+)
 
 const (
 	minTemp = 15
@@ -12,14 +15,14 @@ type ConditionerT struct {
 	maxTemp int
 }
 
-func New(minTemperature, maxTemperature int) ConditionerT {
+func new(minTemperature, maxTemperature int) ConditionerT {
 	return ConditionerT{
 		minTemp: minTemperature,
 		maxTemp: maxTemperature,
 	}
 }
 
-func (cond *ConditionerT) changeTemp(sign string, degrees int) int {
+func (cond *ConditionerT) changeTemp(sign string, degrees int) (int, error) {
 	switch sign {
 	case ">=":
 		if degrees >= cond.minTemp {
@@ -31,13 +34,13 @@ func (cond *ConditionerT) changeTemp(sign string, degrees int) int {
 			cond.maxTemp = degrees
 		}
 	default:
-		fmt.Println("Invalid operation")
+		return -1, errors.New("invalid operation")
 	}
 
 	if cond.minTemp <= cond.maxTemp {
-		return cond.minTemp
+		return cond.minTemp, nil
 	} else {
-		return -1
+		return -1, nil
 	}
 }
 
@@ -46,7 +49,7 @@ func main() {
 
 	_, err := fmt.Scan(&departNum)
 	if err != nil {
-		fmt.Println("Invalid input", err)
+		fmt.Println("Failed to read count of departments", err)
 
 		return
 	}
@@ -56,19 +59,19 @@ func main() {
 
 		_, err := fmt.Scan(&emplCount)
 		if err != nil {
-			fmt.Println("Invalid input", err)
+			fmt.Println("Failed to read count of employees", err)
 
 			return
 		}
 
-		conditioner := New(minTemp, maxTemp)
+		conditioner := new(minTemp, maxTemp)
 
 		for range emplCount {
 			var sign string
 
 			_, err = fmt.Scan(&sign)
 			if err != nil {
-				fmt.Println("Invalid input", err)
+				fmt.Println("Failed to read sign", err)
 
 				return
 			}
@@ -77,12 +80,19 @@ func main() {
 
 			_, err = fmt.Scan(&degrees)
 			if err != nil {
-				fmt.Println("Invalid input", err)
+				fmt.Println("Failed to read temperature", err)
 
 				return
 			}
 
-			fmt.Println(conditioner.changeTemp(sign, degrees))
+			result, err := conditioner.changeTemp(sign, degrees)
+			if err != nil {
+				fmt.Println("Error: ", err)
+
+				return
+			}
+
+			fmt.Println(result)
 		}
 	}
 }
