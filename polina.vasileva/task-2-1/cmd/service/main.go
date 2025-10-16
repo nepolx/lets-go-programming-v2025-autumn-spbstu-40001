@@ -10,9 +10,7 @@ const (
 	maxTemp = 30
 )
 
-var (
-	ErrInvalidOperation = errors.New("invalid operation")
-)
+var ErrInvalidOperation = errors.New("invalid operation")
 
 type ConditionerT struct {
 	minTemp int
