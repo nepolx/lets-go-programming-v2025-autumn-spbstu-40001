@@ -30,7 +30,7 @@ func (h *IntHeap) Pop() any {
 
 	lenHeap := len(old)
 	if lenHeap == 0 {
-		panic("pop from empty heap")
+		return nil
 	}
 
 	x := old[lenHeap-1]
