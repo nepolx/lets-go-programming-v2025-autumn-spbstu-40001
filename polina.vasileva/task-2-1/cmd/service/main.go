@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"errors"
+	"fmt"
 )
 
 const (
@@ -10,12 +10,16 @@ const (
 	maxTemp = 30
 )
 
+var (
+	ErrInvalidOperation = errors.New("invalid operation")
+)
+
 type ConditionerT struct {
 	minTemp int
 	maxTemp int
 }
 
-func new(minTemperature, maxTemperature int) ConditionerT {
+func newConditioner(minTemperature, maxTemperature int) ConditionerT {
 	return ConditionerT{
 		minTemp: minTemperature,
 		maxTemp: maxTemperature,
@@ -34,7 +38,7 @@ func (cond *ConditionerT) changeTemp(sign string, degrees int) (int, error) {
 			cond.maxTemp = degrees
 		}
 	default:
-		return -1, errors.New("invalid operation")
+		return -1, ErrInvalidOperation
 	}
 
 	if cond.minTemp <= cond.maxTemp {
@@ -64,7 +68,7 @@ func main() {
 			return
 		}
 
-		conditioner := new(minTemp, maxTemp)
+		conditioner := newConditioner(minTemp, maxTemp)
 
 		for range emplCount {
 			var sign string
