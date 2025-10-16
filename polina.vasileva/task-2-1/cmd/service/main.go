@@ -49,6 +49,7 @@ func (cond *ConditionerT) changeTemp(sign string, degrees int) (int, error) {
 }
 
 func main() {
+	
 	var departNum int
 
 	_, err := fmt.Scan(&departNum)
