@@ -8,9 +8,9 @@ import (
 )
 
 var (
-	ErrEmptyNumber = errors.New("empty number")
+	ErrEmptyNumber        = errors.New("empty number")
 	ErrMultipleSeparators = errors.New("multiple decimal separators")
-	ErrInvalidNumber = errors.New("invalid number")
+	ErrInvalidNumber      = errors.New("invalid number")
 )
 
 type Rates struct {
@@ -19,7 +19,7 @@ type Rates struct {
 
 type (
 	CommaFloat float64
-	Currency struct {
+	Currency   struct {
 		NumCode  int        `json:"num_code"  xml:"NumCode"`
 		CharCode string     `json:"char_code" xml:"CharCode"`
 		Value    CommaFloat `json:"value"     xml:"Value"`
