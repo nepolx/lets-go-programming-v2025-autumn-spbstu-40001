@@ -14,8 +14,8 @@ func ParseJSON[T any](filePath string, data T) error {
 	}
 
 	directory := filepath.Dir(filePath)
+
 	err = os.MkdirAll(directory, 0755)
-	
 	if err != nil {
 		return fmt.Errorf("cannot create directory '%s': %w", directory, err)
 	}
