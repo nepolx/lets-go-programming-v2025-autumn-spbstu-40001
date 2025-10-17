@@ -6,6 +6,12 @@ import (
 	"fmt"
 )
 
+var (
+	ErrEmptyNumber = fmt.Errorf("empty number")
+	ErrMultipleSeparators = fmt.Errorf("multiple decimal separators")
+	ErrInvalidNumber = fmt.Errorf("invalid number")
+)
+
 type Rates struct {
 	Data []Currency `xml:"Valute"`
 }
@@ -22,17 +28,17 @@ type (
 func (cf *CommaFloat) UnmarshalText(text []byte) error {
 	str := strings.TrimSpace(string(text))
 	if str == "" {
-		return fmt.Errorf("empty number")
+		return ErrEmptyNumber
 	}
 
 	str = strings.Replace(str, ",", ".", 1)
 	if strings.Count(str, ",") > 0 {
-		return fmt.Errorf("multiple decimal separators")
+		return fmt.Errorf("%w: %q", ErrMultipleSeparators, text)
 	}
 
 	v, err := strconv.ParseFloat(str, 64)
 	if err != nil {
-		return fmt.Errorf("invalid number")
+		return fmt.Errorf("%w: %q: %w", ErrInvalidNumber, text, err)
 	}
 
 	*cf = CommaFloat(v)
