@@ -1,15 +1,16 @@
 package currency
 
 import (
+	"errors"
+	"fmt"
 	"strconv"
 	"strings"
-	"fmt"
 )
 
 var (
-	ErrEmptyNumber = fmt.Errorf("empty number")
-	ErrMultipleSeparators = fmt.Errorf("multiple decimal separators")
-	ErrInvalidNumber = fmt.Errorf("invalid number")
+	ErrEmptyNumber = errors.New("empty number")
+	ErrMultipleSeparators = errors.New("multiple decimal separators")
+	ErrInvalidNumber = errors.New("invalid number")
 )
 
 type Rates struct {
