@@ -43,7 +43,7 @@ func (cf *CommaFloat) UnmarshalText(text []byte) error {
 	}
 
 	*cf = CommaFloat(value)
-	
+
 	return nil
 }
 
