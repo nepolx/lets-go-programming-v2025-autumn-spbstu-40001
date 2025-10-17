@@ -27,27 +27,26 @@ type (
 )
 
 func (cf *CommaFloat) UnmarshalText(text []byte) error {
-	str := strings.TrimSpace(string(text))
-	if str == "" {
+	input := strings.TrimSpace(string(text))
+	if input == "" {
 		return ErrEmptyNumber
 	}
 
-	str = strings.Replace(str, ",", ".", 1)
-	if strings.Count(str, ",") > 0 {
+	normalized := strings.Replace(input, ",", ".", 1)
+	if strings.Contains(normalized, ",") {
 		return fmt.Errorf("%w: %q", ErrMultipleSeparators, text)
 	}
 
-	v, err := strconv.ParseFloat(str, 64)
+	value, err := strconv.ParseFloat(normalized, 64)
 	if err != nil {
 		return fmt.Errorf("%w: %q: %w", ErrInvalidNumber, text, err)
 	}
 
-	*cf = CommaFloat(v)
-
+	*cf = CommaFloat(value)
 	return nil
 }
 
-func DescendingComparatorCurrency(a, b Currency) int {
+func ComparatorCurrency(a, b Currency) int {
 	floatA, floatB := float64(a.Value), float64(b.Value)
 
 	switch {

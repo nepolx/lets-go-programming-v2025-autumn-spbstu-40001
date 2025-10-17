@@ -26,7 +26,7 @@ func main() {
 		panic(err)
 	}
 
-	slices.SortStableFunc(currencyList.Data, currency.DescendingComparatorCurrency)
+	slices.SortStableFunc(currencyList.Data, currency.ComparatorCurrency)
 
 	err = json.ParseJSON(config.OutputFilePath, currencyList.Data)
 	if err != nil {
