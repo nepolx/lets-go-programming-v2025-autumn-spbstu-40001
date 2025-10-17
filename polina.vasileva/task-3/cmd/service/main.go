@@ -11,7 +11,6 @@ import (
 )
 
 func main() {
-
 	configPath := flag.String("config", "config.yaml", "path to config")
 	flag.Parse()
 
@@ -22,14 +21,14 @@ func main() {
 	
 	currencyList := currency.Rates{}
 
-	err = xml.ParseXml(config.InputFilePath, &currencyList)
+	err = xml.ParseXML(config.InputFilePath, &currencyList)
 	if err != nil {
 		panic(err)
 	}
 
 	slices.SortStableFunc(currencyList.Data, currency.DescendingComparatorCurrency)
 
-	err = json.ParseJson(config.OutputFilePath, currencyList.Data)
+	err = json.ParseJSON(config.OutputFilePath, currencyList.Data)
 	if err != nil {
 		panic(err)
 	}
