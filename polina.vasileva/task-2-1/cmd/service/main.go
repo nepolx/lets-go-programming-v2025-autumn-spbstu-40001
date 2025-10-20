@@ -36,14 +36,14 @@ func (cond *ConditionerT) changeTemp(sign string, degrees int) (int, error) {
 			cond.maxTemp = degrees
 		}
 	default:
-		return -1, ErrInvalidOperation
+		return 0, ErrInvalidOperation
 	}
 
 	if cond.minTemp <= cond.maxTemp {
 		return cond.minTemp, nil
-	} else {
-		return -1, nil
 	}
+	
+	return -1, nil
 }
 
 func main() {
@@ -73,7 +73,7 @@ func main() {
 
 			_, err = fmt.Scan(&sign)
 			if err != nil {
-				fmt.Println("Failed to read sign", err)
+				fmt.Println("Failed to read sign: ", err)
 
 				return
 			}
@@ -82,14 +82,14 @@ func main() {
 
 			_, err = fmt.Scan(&degrees)
 			if err != nil {
-				fmt.Println("Failed to read temperature", err)
+				fmt.Println("Failed to read temperature: ", err)
 
 				return
 			}
 
 			result, err := conditioner.changeTemp(sign, degrees)
 			if err != nil {
-				fmt.Println("Error: ", err)
+				fmt.Println("Failed to recalculate temp: ", err)
 
 				return
 			}
