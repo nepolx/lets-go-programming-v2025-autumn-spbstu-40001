@@ -42,6 +42,7 @@ func (cond *ConditionerT) changeTemp(sign string, degrees int) (int, error) {
 	if cond.minTemp <= cond.maxTemp {
 		return cond.minTemp, nil
 	}
+
 	return -1, nil
 }
 
