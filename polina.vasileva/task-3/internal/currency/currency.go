@@ -18,15 +18,15 @@ type Rates struct {
 }
 
 type (
-	CommaFloat float64
+	FloatforCur float64
 	Currency   struct {
 		NumCode  int        `json:"num_code"  xml:"NumCode"`
 		CharCode string     `json:"char_code" xml:"CharCode"`
-		Value    CommaFloat `json:"value"     xml:"Value"`
+		Value    FloatforCur `json:"value"     xml:"Value"`
 	}
 )
 
-func (cf *CommaFloat) UnmarshalText(text []byte) error {
+func (cf *FloatforCur) UnmarshalText(text []byte) error {
 	input := strings.TrimSpace(string(text))
 	if input == "" {
 		return ErrEmptyNumber
@@ -42,20 +42,7 @@ func (cf *CommaFloat) UnmarshalText(text []byte) error {
 		return fmt.Errorf("%w: %q: %w", ErrInvalidNumber, text, err)
 	}
 
-	*cf = CommaFloat(value)
+	*cf = FloatforCur(value)
 
 	return nil
-}
-
-func ComparatorCurrency(a, b Currency) int {
-	floatA, floatB := float64(a.Value), float64(b.Value)
-
-	switch {
-	case floatB < floatA:
-		return -1
-	case floatB > floatA:
-		return 1
-	default:
-		return 0
-	}
 }
