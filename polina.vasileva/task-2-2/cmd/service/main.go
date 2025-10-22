@@ -19,7 +19,7 @@ func main() {
 
 	_, err := fmt.Scan(&dishNum)
 	if err != nil {
-		fmt.Println("Invalid input", err)
+		fmt.Println("Error reading number of dishes:", err)
 
 		return
 	}
@@ -32,7 +32,7 @@ func main() {
 
 		_, err := fmt.Scan(&temp)
 		if err != nil {
-			fmt.Println("Invalid input", err)
+			fmt.Println("Error reading dish value", err)
 
 			return
 		}
@@ -44,7 +44,7 @@ func main() {
 
 	_, err = fmt.Scan(&rating)
 	if err != nil {
-		fmt.Println("Invalid input", err)
+		fmt.Println("Error reading desired rating position:", err)
 
 		return
 	}
