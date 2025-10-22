@@ -12,7 +12,7 @@ const (
 	filePermissions = 0o600
 )
 
-func ParseJSON[T any](filePath string, data T) error {
+func ParseJSON(filePath string, data interface{}) error {
 	jsonData, err := json.MarshalIndent(data, "", "\t")
 	if err != nil {
 		return fmt.Errorf("serialize to JSON: %w", err)
