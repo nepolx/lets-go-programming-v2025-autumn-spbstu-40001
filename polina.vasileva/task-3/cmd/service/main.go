@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"slices"
+	"sort"
 
 	"polina.vasileva/task-3/internal/config"
 	"polina.vasileva/task-3/internal/currency"
@@ -26,7 +26,9 @@ func main() {
 		panic(err)
 	}
 
-	slices.SortStableFunc(currencyList.Data, currency.ComparatorCurrency)
+	sort.Slice(currencyList.Data, func(i, j int) bool {
+		return currencyList.Data[i].Value > currencyList.Data[j].Value
+	})
 
 	err = json.ParseJSON(config.OutputFilePath, currencyList.Data)
 	if err != nil {
