@@ -1,16 +1,9 @@
 package currency
 
 import (
-	"errors"
 	"fmt"
 	"strconv"
 	"strings"
-)
-
-var (
-	ErrEmptyNumber        = errors.New("empty number")
-	ErrMultipleSeparators = errors.New("multiple decimal separators")
-	ErrInvalidNumber      = errors.New("invalid number")
 )
 
 type Rates struct {
@@ -29,17 +22,17 @@ type (
 func (cf *FloatforCur) UnmarshalText(text []byte) error {
 	input := strings.TrimSpace(string(text))
 	if input == "" {
-		return ErrEmptyNumber
+		return fmt.Errorf("empty number")
 	}
 
 	normalized := strings.Replace(input, ",", ".", 1)
 	if strings.Contains(normalized, ",") {
-		return fmt.Errorf("%w: %q", ErrMultipleSeparators, text)
+		return fmt.Errorf("multiple decimal separators in %q", text)
 	}
 
 	value, err := strconv.ParseFloat(normalized, 64)
 	if err != nil {
-		return fmt.Errorf("%w: %q: %w", ErrInvalidNumber, text, err)
+		return fmt.Errorf("invalid number %q: %v", text, err)
 	}
 
 	*cf = FloatforCur(value)

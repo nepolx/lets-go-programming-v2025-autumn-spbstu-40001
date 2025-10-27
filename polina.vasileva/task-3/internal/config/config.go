@@ -13,7 +13,7 @@ type Config struct {
 }
 
 func ParseYaml(configPath string) (*Config, error) {
-	result := &Config{InputFilePath: "", OutputFilePath: ""}
+	var result Config
 
 	file, err := os.ReadFile(configPath)
 	if err != nil {
@@ -25,5 +25,5 @@ func ParseYaml(configPath string) (*Config, error) {
 		return nil, fmt.Errorf("cannot unmarshal file: %w", err)
 	}
 
-	return result, nil
+	return &result, nil
 }
