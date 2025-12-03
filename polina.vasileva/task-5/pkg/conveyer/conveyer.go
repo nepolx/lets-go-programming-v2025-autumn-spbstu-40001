@@ -12,7 +12,6 @@ const Undefined = "undefined"
 
 var ErrChannelNotFound = errors.New("chan not found")
 
-
 type Conveyer struct {
 	lock     sync.Mutex
 	pipes    map[string]chan string
@@ -61,9 +60,9 @@ func (c *Conveyer) RegisterDecorator(
 
 	job := func(ctx context.Context) error {
 		defer func() {
-    	recover()
-    	close(out)
-	}()
+			recover()
+			close(out)
+		}()
 
 		return fn(ctx, inp, out)
 	}
@@ -87,8 +86,8 @@ func (c *Conveyer) RegisterMultiplexer(
 
 	job := func(ctx context.Context) error {
 		defer func() {
-    		recover()
-    		close(out)
+			recover()
+			close(out)
 		}()
 
 		return fn(ctx, inList, out)
@@ -113,12 +112,12 @@ func (c *Conveyer) RegisterSeparator(
 
 	job := func(ctx context.Context) error {
 		defer func() {
-    		for _, ch := range outs {
-        		func(ch chan string) {
-            		defer recover()
-            		close(ch)
-        		}(ch)
-    		}
+			for _, ch := range outs {
+				func(ch chan string) {
+					defer recover()
+					close(ch)
+				}(ch)
+			}
 		}()
 
 		return fn(ctx, inp, outs)
@@ -150,7 +149,6 @@ func (c *Conveyer) Run(ctx context.Context) error {
 	return group.Wait()
 }
 
-
 func (c *Conveyer) Send(input, data string) error {
 	ch, ok := c.lookup(input)
 	if !ok {
@@ -158,7 +156,7 @@ func (c *Conveyer) Send(input, data string) error {
 	}
 
 	defer func() {
-    _ = recover()
+		_ = recover()
 	}()
 
 	ch <- data
