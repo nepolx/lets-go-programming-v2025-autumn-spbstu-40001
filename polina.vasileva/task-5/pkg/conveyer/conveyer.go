@@ -8,7 +8,10 @@ import (
 
 const Undefined = "undefined"
 
-var ErrChannelNotFound = errors.New("chan not found")
+var (
+	ErrChannelNotFound = errors.New("chan not found")
+	ErrChannelFull     = errors.New("channel is full")
+)
 
 type Task func(ctx context.Context) error
 
@@ -31,7 +34,7 @@ func (c *Conveyer) getOrCreateChannel(name string) chan string {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	if ch, ok := c.channels[name]; ok {
+	if ch, exists := c.channels[name]; exists {
 		return ch
 	}
 
@@ -50,7 +53,10 @@ func (c *Conveyer) getChannel(name string) (chan string, bool) {
 	return ch, ok
 }
 
-func (c *Conveyer) RegisterDecorator(fn func(ctx context.Context, input, output chan string) error, input, output string) {
+func (c *Conveyer) RegisterDecorator(
+	fn func(ctx context.Context, input, output chan string) error,
+	input, output string,
+) {
 	inCh := c.getOrCreateChannel(input)
 	outCh := c.getOrCreateChannel(output)
 
@@ -72,16 +78,22 @@ func (c *Conveyer) RegisterDecorator(fn func(ctx context.Context, input, output 
 			}
 		}
 	}
+
 	c.mu.Lock()
 	c.tasks = append(c.tasks, task)
 	c.mu.Unlock()
 }
 
-func (c *Conveyer) RegisterMultiplexer(fn func(ctx context.Context, inputs []chan string, output chan string) error, inputs []string, output string) {
+func (c *Conveyer) RegisterMultiplexer(
+	fn func(ctx context.Context, inputs []chan string, output chan string) error,
+	inputs []string,
+	output string,
+) {
 	inChs := make([]chan string, len(inputs))
 	for i, name := range inputs {
 		inChs[i] = c.getOrCreateChannel(name)
 	}
+
 	outCh := c.getOrCreateChannel(output)
 
 	task := func(ctx context.Context) error {
@@ -93,8 +105,13 @@ func (c *Conveyer) RegisterMultiplexer(fn func(ctx context.Context, inputs []cha
 	c.mu.Unlock()
 }
 
-func (c *Conveyer) RegisterSeparator(fn func(ctx context.Context, input chan string, outputs []chan string) error, input string, outputs []string) {
+func (c *Conveyer) RegisterSeparator(
+	fn func(ctx context.Context, input chan string, outputs []chan string) error,
+	input string,
+	outputs []string,
+) {
 	inCh := c.getOrCreateChannel(input)
+
 	outChs := make([]chan string, len(outputs))
 	for i, name := range outputs {
 		outChs[i] = c.getOrCreateChannel(name)
@@ -145,7 +162,6 @@ func (c *Conveyer) Run(ctx context.Context) error {
 		return err
 	case <-done:
 		c.closeAll()
-
 		return nil
 	}
 }
@@ -159,25 +175,26 @@ func (c *Conveyer) closeAll() {
 	}
 }
 
-func (c *Conveyer) Send(name, data string) error {
-	ch, ok := c.getChannel(name)
+func (c *Conveyer) Send(input string, data string) error {
+	ch, ok := c.getChannel(input)
 	if !ok {
 		return ErrChannelNotFound
 	}
+
 	select {
 	case ch <- data:
 		return nil
 	default:
-		return errors.New("channel is full")
+		return ErrChannelFull
 	}
 }
 
-func (c *Conveyer) Recv(name string) (string, error) {
-	ch, ok := c.getChannel(name)
+func (c *Conveyer) Recv(output string) (string, error) {
+	ch, ok := c.getChannel(output)
 	if !ok {
 		return "", ErrChannelNotFound
 	}
-	
+
 	select {
 	case val, ok := <-ch:
 		if !ok {
