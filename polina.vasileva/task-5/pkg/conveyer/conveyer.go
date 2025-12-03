@@ -151,8 +151,6 @@ func (c *Conveyer) Send(input, data string) error {
 	select {
 	case ch <- data:
 		return nil
-	case <-context.Background().Done():
-		return ErrChannelFull
 	default:
 		return ErrChannelFull
 	}
