@@ -33,30 +33,22 @@ func New(size int) *Conveyer {
 func (c *Conveyer) getOrCreateChannel(name string) chan string {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-
-	if ch, exists := c.channels[name]; exists {
+	if ch, ok := c.channels[name]; ok {
 		return ch
 	}
-
 	ch := make(chan string, c.chanSize)
 	c.channels[name] = ch
-
 	return ch
 }
 
 func (c *Conveyer) getChannel(name string) (chan string, bool) {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
-
 	ch, ok := c.channels[name]
-
 	return ch, ok
 }
 
-func (c *Conveyer) RegisterDecorator(
-	fn func(ctx context.Context, input, output chan string) error,
-	input, output string,
-) {
+func (c *Conveyer) RegisterDecorator(fn func(ctx context.Context, input, output chan string) error, input, output string) {
 	inCh := c.getOrCreateChannel(input)
 	outCh := c.getOrCreateChannel(output)
 
@@ -69,16 +61,11 @@ func (c *Conveyer) RegisterDecorator(
 	c.mu.Unlock()
 }
 
-func (c *Conveyer) RegisterMultiplexer(
-	fn func(ctx context.Context, inputs []chan string, output chan string) error,
-	inputs []string,
-	output string,
-) {
+func (c *Conveyer) RegisterMultiplexer(fn func(ctx context.Context, inputs []chan string, output chan string) error, inputs []string, output string) {
 	inChs := make([]chan string, len(inputs))
 	for i, name := range inputs {
 		inChs[i] = c.getOrCreateChannel(name)
 	}
-
 	outCh := c.getOrCreateChannel(output)
 
 	task := func(ctx context.Context) error {
@@ -90,13 +77,8 @@ func (c *Conveyer) RegisterMultiplexer(
 	c.mu.Unlock()
 }
 
-func (c *Conveyer) RegisterSeparator(
-	fn func(ctx context.Context, input chan string, outputs []chan string) error,
-	input string,
-	outputs []string,
-) {
+func (c *Conveyer) RegisterSeparator(fn func(ctx context.Context, input chan string, outputs []chan string) error, input string, outputs []string) {
 	inCh := c.getOrCreateChannel(input)
-
 	outChs := make([]chan string, len(outputs))
 	for i, name := range outputs {
 		outChs[i] = c.getOrCreateChannel(name)
@@ -160,7 +142,7 @@ func (c *Conveyer) closeAll() {
 	}
 }
 
-func (c *Conveyer) Send(input string, data string) error {
+func (c *Conveyer) Send(input, data string) error {
 	ch, ok := c.getChannel(input)
 	if !ok {
 		return ErrChannelNotFound
@@ -169,6 +151,8 @@ func (c *Conveyer) Send(input string, data string) error {
 	select {
 	case ch <- data:
 		return nil
+	case <-context.Background().Done():
+		return ErrChannelFull
 	default:
 		return ErrChannelFull
 	}
