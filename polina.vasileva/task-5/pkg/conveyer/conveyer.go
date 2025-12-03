@@ -10,7 +10,10 @@ import (
 
 const Undefined = "undefined"
 
-var ErrChannelNotFound = errors.New("chan not found")
+var (
+	ErrChannelNotFound = errors.New("chan not found")
+	ErrRunConveyer     = errors.New("conveyer run failed")
+)
 
 type Conveyer struct {
 	lock     sync.Mutex
@@ -21,6 +24,7 @@ type Conveyer struct {
 
 func New(size int) *Conveyer {
 	return &Conveyer{
+		lock:     sync.Mutex{},
 		pipes:    make(map[string]chan string),
 		workers:  []func(context.Context) error{},
 		capacity: size,
@@ -60,7 +64,7 @@ func (c *Conveyer) RegisterDecorator(
 
 	job := func(ctx context.Context) error {
 		defer func() {
-			recover()
+			_ = recover()
 			close(out)
 		}()
 
@@ -86,7 +90,7 @@ func (c *Conveyer) RegisterMultiplexer(
 
 	job := func(ctx context.Context) error {
 		defer func() {
-			recover()
+			_ = recover()
 			close(out)
 		}()
 
@@ -131,27 +135,27 @@ func (c *Conveyer) RegisterSeparator(
 func (c *Conveyer) Run(ctx context.Context) error {
 	c.lock.Lock()
 	snapshot := make([]func(context.Context) error, len(c.workers))
-	for i := 0; i < len(c.workers); i++ {
-		snapshot[i] = c.workers[i]
-	}
+	copy(snapshot, c.workers)
 	c.lock.Unlock()
 
 	group, gctx := errgroup.WithContext(ctx)
 
-	for i := 0; i < len(snapshot); i++ {
+	for i := range snapshot {
 		pos := i
-
 		group.Go(func() error {
 			return snapshot[pos](gctx)
 		})
 	}
 
-	return group.Wait()
+	if err := group.Wait(); err != nil {
+		return ErrRunConveyer
+	}
+	return nil
 }
 
 func (c *Conveyer) Send(input, data string) error {
-	ch, ok := c.lookup(input)
-	if !ok {
+	channel, exists := c.lookup(input)
+	if !exists {
 		return ErrChannelNotFound
 	}
 
@@ -159,18 +163,18 @@ func (c *Conveyer) Send(input, data string) error {
 		_ = recover()
 	}()
 
-	ch <- data
+	channel <- data
 
 	return nil
 }
 
 func (c *Conveyer) Recv(output string) (string, error) {
-	ch, ok := c.lookup(output)
-	if !ok {
+	channel, exists := c.lookup(output)
+	if !exists {
 		return "", ErrChannelNotFound
 	}
 
-	val, ok := <-ch
+	val, ok := <-channel
 	if !ok {
 		return Undefined, nil
 	}

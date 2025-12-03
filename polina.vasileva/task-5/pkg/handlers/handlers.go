@@ -95,6 +95,7 @@ func MultiplexerFunc(ctx context.Context, inChans []chan string, outChan chan st
 			}
 		}(ch)
 	}
+
 	wg.Wait()
 
 	return nil
