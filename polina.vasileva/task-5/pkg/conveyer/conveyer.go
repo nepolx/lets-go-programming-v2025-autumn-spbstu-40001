@@ -60,7 +60,10 @@ func (c *Conveyer) RegisterDecorator(
 	out := c.ensure(output)
 
 	job := func(ctx context.Context) error {
-		defer close(out)
+		defer func() {
+    	recover()
+    	close(out)
+	}()
 
 		return fn(ctx, inp, out)
 	}
@@ -83,7 +86,10 @@ func (c *Conveyer) RegisterMultiplexer(
 	out := c.ensure(output)
 
 	job := func(ctx context.Context) error {
-		defer close(out)
+		defer func() {
+    		recover()
+    		close(out)
+		}()
 
 		return fn(ctx, inList, out)
 	}
@@ -107,9 +113,12 @@ func (c *Conveyer) RegisterSeparator(
 
 	job := func(ctx context.Context) error {
 		defer func() {
-			for _, ch := range outs {
-				close(ch)
-			}
+    		for _, ch := range outs {
+        		func(ch chan string) {
+            		defer recover()
+            		close(ch)
+        		}(ch)
+    		}
 		}()
 
 		return fn(ctx, inp, outs)
@@ -148,10 +157,12 @@ func (c *Conveyer) Send(input, data string) error {
 		return ErrChannelNotFound
 	}
 
-	defer func() { recover() }()
+	defer func() {
+    _ = recover()
+	}()
 
 	ch <- data
-	
+
 	return nil
 }
 
