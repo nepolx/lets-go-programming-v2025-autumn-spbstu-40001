@@ -61,22 +61,7 @@ func (c *Conveyer) RegisterDecorator(
 	outCh := c.getOrCreateChannel(output)
 
 	task := func(ctx context.Context) error {
-		for {
-			select {
-			case <-ctx.Done():
-				return ctx.Err()
-			case data, ok := <-inCh:
-				if !ok {
-					return nil
-				}
-				tmpCh := make(chan string, 1)
-				tmpCh <- data
-				close(tmpCh)
-				if err := fn(ctx, tmpCh, outCh); err != nil {
-					return err
-				}
-			}
-		}
+		return fn(ctx, inCh, outCh)
 	}
 
 	c.mu.Lock()
