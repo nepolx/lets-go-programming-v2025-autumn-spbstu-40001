@@ -9,7 +9,7 @@ import (
 
 var (
 	ErrNoDecorator = errors.New("can't be decorated")
-	ErrNoOutputs   = errors.New("no output channels provided for separator")
+	ErrNoOutputs   = errors.New("no output channels")
 )
 
 func PrefixDecoratorFunc(ctx context.Context, inChan, outChan chan string) error {
@@ -68,11 +68,16 @@ func SeparatorFunc(ctx context.Context, inChan chan string, outChans []chan stri
 }
 
 func MultiplexerFunc(ctx context.Context, inChans []chan string, outChan chan string) error {
-	var waitGroup sync.WaitGroup
-	for _, channel := range inChans {
-		waitGroup.Add(1)
+	if len(inChans) == 0 {
+		return ErrNoOutputs
+	}
 
-		worker := func(inputChannel chan string) {
+	var waitGroup sync.WaitGroup
+
+	waitGroup.Add(len(inChans))
+
+	for _, channel := range inChans {
+		go func(inputChannel chan string) {
 			defer waitGroup.Done()
 
 			for {
@@ -95,8 +100,8 @@ func MultiplexerFunc(ctx context.Context, inChans []chan string, outChan chan st
 					}
 				}
 			}
-		}
-		go worker(channel)
+		}(channel)
+
 	}
 
 	waitGroup.Wait()
