@@ -14,7 +14,7 @@ const Undefined = "undefined"
 var ErrChannelNotFound = errors.New("chan not found")
 
 type Conveyer struct {
-	lock     sync.Mutex
+	lock     sync.RWMutex
 	pipes    map[string]chan string
 	workers  []func(context.Context) error
 	capacity int
@@ -22,7 +22,7 @@ type Conveyer struct {
 
 func New(size int) *Conveyer {
 	return &Conveyer{
-		lock:     sync.Mutex{},
+		lock:     sync.RWMutex{},
 		pipes:    make(map[string]chan string),
 		workers:  []func(context.Context) error{},
 		capacity: size,
@@ -30,10 +30,18 @@ func New(size int) *Conveyer {
 }
 
 func (c *Conveyer) ensure(name string) chan string {
+	c.lock.RLock()
+	exist := c.pipes[name]
+	c.lock.RUnlock()
+
+	if exist != nil {
+		return exist
+	}
+
 	c.lock.Lock()
 	defer c.lock.Unlock()
 
-	exist := c.pipes[name]
+	exist = c.pipes[name]
 	if exist != nil {
 		return exist
 	}
@@ -45,10 +53,9 @@ func (c *Conveyer) ensure(name string) chan string {
 }
 
 func (c *Conveyer) lookup(name string) (chan string, bool) {
-	c.lock.Lock()
-	defer c.lock.Unlock()
-
+	c.lock.RLock()
 	ch, ok := c.pipes[name]
+	c.lock.RUnlock()
 
 	return ch, ok
 }
@@ -60,14 +67,12 @@ func (c *Conveyer) RegisterDecorator(
 	inp := c.ensure(input)
 	out := c.ensure(output)
 
-	job := func(ctx context.Context) error {
+	c.lock.Lock()
+	c.workers = append(c.workers, func(ctx context.Context) error {
 		defer close(out)
 
 		return functionn(ctx, inp, out)
-	}
-
-	c.lock.Lock()
-	c.workers = append(c.workers, job)
+	})
 	c.lock.Unlock()
 }
 
@@ -107,15 +112,6 @@ func (c *Conveyer) RegisterSeparator(
 	}
 
 	job := func(ctx context.Context) error {
-		defer func() {
-			for _, ch := range outs {
-				func(c chan string) {
-					defer func() { _ = recover() }()
-					close(c)
-				}(ch)
-			}
-		}()
-
 		return functionn(ctx, inp, outs)
 	}
 
@@ -125,18 +121,16 @@ func (c *Conveyer) RegisterSeparator(
 }
 
 func (c *Conveyer) Run(ctx context.Context) error {
-	c.lock.Lock()
-	snapshot := make([]func(context.Context) error, len(c.workers))
-	copy(snapshot, c.workers)
-	c.lock.Unlock()
+	c.lock.RLock()
+	workers := c.workers
+	c.lock.RUnlock()
 
 	group, gctx := errgroup.WithContext(ctx)
 
-	for i := range snapshot {
-		pos := i
-
+	for i := range workers {
+		job := workers[i]
 		group.Go(func() error {
-			return snapshot[pos](gctx)
+			return job(gctx)
 		})
 	}
 
@@ -153,10 +147,7 @@ func (c *Conveyer) Send(input, data string) error {
 		return ErrChannelNotFound
 	}
 
-	defer func() {
-		_ = recover()
-	}()
-
+	defer func() { _ = recover() }()
 	channel <- data
 
 	return nil
