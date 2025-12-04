@@ -45,7 +45,7 @@ func SeparatorFunc(ctx context.Context, inChan chan string, outChans []chan stri
 	}
 
 	index := 0
-	
+
 	for {
 		select {
 		case <-ctx.Done():
@@ -71,7 +71,8 @@ func MultiplexerFunc(ctx context.Context, inChans []chan string, outChan chan st
 	var waitGroup sync.WaitGroup
 	for _, channel := range inChans {
 		waitGroup.Add(1)
-		go func(inputChannel chan string) {
+
+		worker := func(inputChannel chan string) {
 			defer waitGroup.Done()
 
 			for {
@@ -94,7 +95,8 @@ func MultiplexerFunc(ctx context.Context, inChans []chan string, outChan chan st
 					}
 				}
 			}
-		}(channel)
+		}
+		go worker(channel)
 	}
 
 	waitGroup.Wait()
