@@ -10,10 +10,7 @@ import (
 
 const Undefined = "undefined"
 
-var (
-	ErrChannelNotFound = errors.New("chan not found")
-	ErrRunConveyer     = errors.New("conveyer run failed")
-)
+var ErrChannelNotFound = errors.New("chan not found")
 
 type Conveyer struct {
 	lock     sync.Mutex
@@ -56,19 +53,17 @@ func (c *Conveyer) lookup(name string) (chan string, bool) {
 }
 
 func (c *Conveyer) RegisterDecorator(
-	fn func(ctx context.Context, input chan string, output chan string) error,
+	functionn func(ctx context.Context, input chan string, output chan string) error,
 	input, output string,
 ) {
 	inp := c.ensure(input)
 	out := c.ensure(output)
 
 	job := func(ctx context.Context) error {
-		defer func() {
-			_ = recover()
-			close(out)
-		}()
+		defer close(out)
+    	defer recover() 
 
-		return fn(ctx, inp, out)
+		return functionn(ctx, inp, out)
 	}
 
 	c.lock.Lock()
@@ -77,11 +72,11 @@ func (c *Conveyer) RegisterDecorator(
 }
 
 func (c *Conveyer) RegisterMultiplexer(
-	fn func(ctx context.Context, inputs []chan string, output chan string) error,
+	functionn func(ctx context.Context, inputs []chan string, output chan string) error,
 	inputs []string,
 	output string,
 ) {
-	var inList []chan string
+	inList := make([]chan string, 0, len(inputs))
 	for _, n := range inputs {
 		inList = append(inList, c.ensure(n))
 	}
@@ -89,12 +84,10 @@ func (c *Conveyer) RegisterMultiplexer(
 	out := c.ensure(output)
 
 	job := func(ctx context.Context) error {
-		defer func() {
-			_ = recover()
-			close(out)
-		}()
+		defer close(out)
+    	defer recover() 
 
-		return fn(ctx, inList, out)
+		return functionn(ctx, inList, out)
 	}
 
 	c.lock.Lock()
@@ -109,7 +102,7 @@ func (c *Conveyer) RegisterSeparator(
 ) {
 	inp := c.ensure(input)
 
-	var outs []chan string
+	outs := make([]chan string, 0, len(outputs))
 	for _, n := range outputs {
 		outs = append(outs, c.ensure(n))
 	}
@@ -117,10 +110,8 @@ func (c *Conveyer) RegisterSeparator(
 	job := func(ctx context.Context) error {
 		defer func() {
 			for _, ch := range outs {
-				func(ch chan string) {
-					defer recover()
-					close(ch)
-				}(ch)
+				defer close(ch)
+    			defer recover() 
 			}
 		}()
 
@@ -142,14 +133,16 @@ func (c *Conveyer) Run(ctx context.Context) error {
 
 	for i := range snapshot {
 		pos := i
+		
 		group.Go(func() error {
 			return snapshot[pos](gctx)
 		})
 	}
 
 	if err := group.Wait(); err != nil {
-		return ErrRunConveyer
+    	return err
 	}
+
 	return nil
 }
 
