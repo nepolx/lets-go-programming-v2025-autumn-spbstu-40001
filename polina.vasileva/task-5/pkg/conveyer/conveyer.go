@@ -3,6 +3,7 @@ package conveyer
 import (
 	"context"
 	"errors"
+	"fmt"
 	"sync"
 
 	"golang.org/x/sync/errgroup"
@@ -109,7 +110,6 @@ func (c *Conveyer) RegisterSeparator(
 		defer func() {
 			for _, ch := range outs {
 				defer close(ch)
-				defer recover()
 			}
 		}()
 
@@ -138,7 +138,7 @@ func (c *Conveyer) Run(ctx context.Context) error {
 	}
 
 	if err := group.Wait(); err != nil {
-		return err
+		return fmt.Errorf("conveyer run failed: %w", err)
 	}
 
 	return nil
