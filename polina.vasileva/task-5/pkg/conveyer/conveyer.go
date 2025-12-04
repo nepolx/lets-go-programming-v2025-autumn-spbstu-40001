@@ -61,7 +61,6 @@ func (c *Conveyer) RegisterDecorator(
 
 	job := func(ctx context.Context) error {
 		defer close(out)
-    	defer recover() 
 
 		return functionn(ctx, inp, out)
 	}
@@ -85,7 +84,6 @@ func (c *Conveyer) RegisterMultiplexer(
 
 	job := func(ctx context.Context) error {
 		defer close(out)
-    	defer recover() 
 
 		return functionn(ctx, inList, out)
 	}
@@ -96,7 +94,7 @@ func (c *Conveyer) RegisterMultiplexer(
 }
 
 func (c *Conveyer) RegisterSeparator(
-	fn func(ctx context.Context, input chan string, outputs []chan string) error,
+	functionn func(ctx context.Context, input chan string, outputs []chan string) error,
 	input string,
 	outputs []string,
 ) {
@@ -111,11 +109,11 @@ func (c *Conveyer) RegisterSeparator(
 		defer func() {
 			for _, ch := range outs {
 				defer close(ch)
-    			defer recover() 
+				defer recover()
 			}
 		}()
 
-		return fn(ctx, inp, outs)
+		return functionn(ctx, inp, outs)
 	}
 
 	c.lock.Lock()
@@ -133,14 +131,14 @@ func (c *Conveyer) Run(ctx context.Context) error {
 
 	for i := range snapshot {
 		pos := i
-		
+
 		group.Go(func() error {
 			return snapshot[pos](gctx)
 		})
 	}
 
 	if err := group.Wait(); err != nil {
-    	return err
+		return err
 	}
 
 	return nil
