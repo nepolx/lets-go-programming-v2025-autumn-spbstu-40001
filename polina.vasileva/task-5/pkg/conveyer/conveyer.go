@@ -109,7 +109,10 @@ func (c *Conveyer) RegisterSeparator(
 	job := func(ctx context.Context) error {
 		defer func() {
 			for _, ch := range outs {
-				defer close(ch)
+				func(c chan string) {
+					defer func() { _ = recover() }()
+					close(c)
+				}(ch)
 			}
 		}()
 
