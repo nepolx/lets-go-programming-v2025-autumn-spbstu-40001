@@ -12,6 +12,12 @@ var (
 	ErrNoOutputs   = errors.New("no output channels")
 )
 
+const (
+	Decorated     = "decorated: "
+	NoDecorator   = "no decorator"
+	NoMultiplexer = "no multiplexer"
+)
+
 func PrefixDecoratorFunc(ctx context.Context, inChan, outChan chan string) error {
 	for {
 		select {
@@ -22,12 +28,12 @@ func PrefixDecoratorFunc(ctx context.Context, inChan, outChan chan string) error
 				return nil
 			}
 
-			if strings.Contains(val, "no decorator") {
+			if strings.Contains(val, NoDecorator) {
 				return ErrNoDecorator
 			}
 
-			if !strings.HasPrefix(val, "decorated: ") {
-				val = "decorated: " + val
+			if !strings.HasPrefix(val, Decorated) {
+				val = Decorated + val
 			}
 
 			select {
@@ -89,7 +95,7 @@ func MultiplexerFunc(ctx context.Context, inChans []chan string, outChan chan st
 						return
 					}
 
-					if strings.Contains(val, "no multiplexer") {
+					if strings.Contains(val, NoMultiplexer) {
 						continue
 					}
 
@@ -101,9 +107,7 @@ func MultiplexerFunc(ctx context.Context, inChans []chan string, outChan chan st
 				}
 			}
 		}(channel)
-
 	}
-
 	waitGroup.Wait()
 
 	return nil

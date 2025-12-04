@@ -54,8 +54,9 @@ func (c *Conveyer) ensure(name string) chan string {
 
 func (c *Conveyer) lookup(name string) (chan string, bool) {
 	c.lock.RLock()
+	defer c.lock.RUnlock()
+
 	ch, ok := c.pipes[name]
-	c.lock.RUnlock()
 
 	return ch, ok
 }
@@ -94,9 +95,7 @@ func (c *Conveyer) RegisterMultiplexer(
 		return functionn(ctx, inList, out)
 	}
 
-	c.lock.Lock()
 	c.workers = append(c.workers, job)
-	c.lock.Unlock()
 }
 
 func (c *Conveyer) RegisterSeparator(
@@ -112,6 +111,12 @@ func (c *Conveyer) RegisterSeparator(
 	}
 
 	job := func(ctx context.Context) error {
+		defer func() {
+			for _, ch := range outs {
+				close(ch)
+			}
+		}()
+
 		return functionn(ctx, inp, outs)
 	}
 
@@ -129,6 +134,7 @@ func (c *Conveyer) Run(ctx context.Context) error {
 
 	for i := range workers {
 		job := workers[i]
+
 		group.Go(func() error {
 			return job(gctx)
 		})
