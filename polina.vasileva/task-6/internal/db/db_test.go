@@ -2,8 +2,9 @@ package db_test
 
 import (
 	"errors"
-	"polina.vasileva/task-6/internal/db"
 	"testing"
+
+	"polina.vasileva/task-6/internal/db"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"

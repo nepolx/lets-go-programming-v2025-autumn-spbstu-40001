@@ -3,8 +3,9 @@ package wifi_test
 import (
 	"errors"
 	"net"
-	"polina.vasileva/task-6/internal/wifi"
 	"testing"
+
+	"polina.vasileva/task-6/internal/wifi"
 
 	mdwifi "github.com/mdlayher/wifi"
 	"github.com/stretchr/testify/assert"
