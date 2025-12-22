@@ -25,14 +25,14 @@ func TestGetNames(t *testing.T) {
 		require.NoError(t, err)
 		defer sqlDB.Close()
 
-		rows := sqlmock.NewRows([]string{"name"}).AddRow("Alice").AddRow("Bob")
+		rows := sqlmock.NewRows([]string{"name"}).AddRow("Polina").AddRow("Anya")
 		mock.ExpectQuery("SELECT name FROM users").WillReturnRows(rows)
 
 		service := db.New(sqlDB)
 		names, err := service.GetNames()
 
 		require.NoError(t, err)
-		assert.Equal(t, []string{"Alice", "Bob"}, names)
+		assert.Equal(t, []string{"Polina", "Anya"}, names)
 	})
 
 	t.Run("query_error", func(t *testing.T) {
@@ -73,7 +73,7 @@ func TestGetNames(t *testing.T) {
 		require.NoError(t, err)
 		defer sqlDB.Close()
 
-		rows := sqlmock.NewRows([]string{"name"}).AddRow("Alice").CloseError(errRows)
+		rows := sqlmock.NewRows([]string{"name"}).AddRow("Polina").CloseError(errRows)
 		mock.ExpectQuery("SELECT name FROM users").WillReturnRows(rows)
 
 		service := db.New(sqlDB)
@@ -93,14 +93,14 @@ func TestGetUniqueNames(t *testing.T) {
 		require.NoError(t, err)
 		defer sqlDB.Close()
 
-		rows := sqlmock.NewRows([]string{"name"}).AddRow("Alice").AddRow("Bob")
+		rows := sqlmock.NewRows([]string{"name"}).AddRow("Polina").AddRow("Anya")
 		mock.ExpectQuery("SELECT DISTINCT name FROM users").WillReturnRows(rows)
 
 		service := db.New(sqlDB)
 		names, err := service.GetUniqueNames()
 
 		require.NoError(t, err)
-		assert.Equal(t, []string{"Alice", "Bob"}, names)
+		assert.Equal(t, []string{"Polina", "Anya"}, names)
 	})
 
 	t.Run("query_error", func(t *testing.T) {
@@ -141,7 +141,7 @@ func TestGetUniqueNames(t *testing.T) {
 		require.NoError(t, err)
 		defer sqlDB.Close()
 
-		rows := sqlmock.NewRows([]string{"name"}).AddRow("Alice").CloseError(errRows)
+		rows := sqlmock.NewRows([]string{"name"}).AddRow("Polina").CloseError(errRows)
 		mock.ExpectQuery("SELECT DISTINCT name FROM users").WillReturnRows(rows)
 
 		service := db.New(sqlDB)
