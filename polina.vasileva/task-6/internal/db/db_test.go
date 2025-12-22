@@ -1,8 +1,8 @@
 package db_test
 
 import (
-	"polina.vasileva/task-6/internal/db"
 	"errors"
+	"polina.vasileva/task-6/internal/db"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"

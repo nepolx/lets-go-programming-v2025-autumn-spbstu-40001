@@ -1,9 +1,9 @@
 package wifi_test
 
 import (
-	"polina.vasileva/task-6/internal/wifi"
 	"errors"
 	"net"
+	"polina.vasileva/task-6/internal/wifi"
 	"testing"
 
 	mdwifi "github.com/mdlayher/wifi"
